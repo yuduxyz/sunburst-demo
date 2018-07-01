@@ -3,26 +3,22 @@
   var WIDTH = 500
   var HEIGHT = 500
   var color = d3.scaleOrdinal(d3.schemeCategory20b)
+  var BASIC_COLOR = 'rgb(204, 204, 204)'
 
   var Sunburst = function (options) {
     this.width = options.width || WIDTH
     this.height = options.height || HEIGHT
-    this.radius = Math.min(this.width, this.height) / 2
     this.data = options.data
     this.options = options
   }
 
   Sunburst.prototype.init = function () {
-    // Data strucure
-    var partition = d3.partition()
-      .size([2 * Math.PI, this.radius])
-
     // Find data root
     this.root = d3.hierarchy(this.data)
-      .sum(function (d) { return d.size })
+      .sum(function (d) { return d.size || 1  })
 
     // Size arcs
-    partition(this.root)
+    partition(this.root.children, 155, 192)
     console.log(this.root)
 
     // Create primary <g> element
@@ -32,11 +28,12 @@
       .append('g')
       .attr('transform', 'translate(' + this.width / 2 + ',' + this.height / 2 + ')')
 
-    this.addConcentricCircles()
     return this
   }
 
   Sunburst.prototype.render = function () {
+    this.addConcentricCircles()
+
     var arc = d3.arc()
       .startAngle(function (d) { return d.x0 })
       .endAngle(function (d) { return d.x1 })
@@ -44,13 +41,16 @@
       .outerRadius(function (d) { return d.y1 })
 
     // Put it all together
-    this.chartLayer.selectAll('path')
+    this.chartLayer.append('g')
+      .classed('index-area', true)
+      .selectAll('path')
       .data(this.root.descendants())
       .enter().append('path')
       .attr('display', function (d) { return d.depth ? null : 'none' })
       .attr('d', arc)
+      .style('stroke-width', 5)
       .style('stroke', '#fff')
-      .style('fill', function (d) { return color((d.children ? d : d.parent).data.name) })
+      .style('fill', BASIC_COLOR)
 
     return this
   }
@@ -72,13 +72,13 @@
       color: 'rgb(149, 149, 53)'
     }, {
       arcConfig: [500, 510, 0, 2 * Math.PI],
-      color: 'rgb(204, 204, 204)'
+      color: BASIC_COLOR
     }, {
-      arcConfig: [610, 760, 0, 2 * Math.PI],
-      color: 'rgb(204, 204, 204)'
+      arcConfig: [630, 760, 0, 2 * Math.PI],
+      color: BASIC_COLOR
     }, {
-      arcConfig: [870, 1020, 0, 2 * Math.PI],
-      color: 'rgb(204, 204, 204)'
+      arcConfig: [890, 1100, 0, 2 * Math.PI],
+      color: BASIC_COLOR
     }]
     this.chartLayer.append('g')
       .classed('concentric-circle', true)
@@ -102,13 +102,32 @@
     return arc()
   }
 
+  /** d3.partition 不能对奇数个节点均匀分布成环，自己实现之 */
+  function partition (data, innerR, outerR) {
+    if (!data.length) {
+      return
+    }
+    var len = data.length
+    var PI = Math.PI
+    var unitRadian = 2 * PI / len
+    var begin = 0
+
+    data.forEach(function (d) {
+      d.x0 = begin
+      d.x1 = begin + unitRadian
+      d.y0 = innerR
+      d.y1 = outerR
+      begin += unitRadian
+    })
+  }
+
   window.Sunburst = function (options) {
     if (!options.data || !options.el) {
       return
     }
     var sunburst = new Sunburst(options)
     sunburst.init()
-    // .render()
+      .render()
     // .bindEvents()
   }
 })()

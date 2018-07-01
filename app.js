@@ -1,17 +1,46 @@
 (function () {
   // JSON data
   var nodeData = {
-    "name": "TOPICS", "children": [{
-      "name": "Topic A",
-      "children": [{ "name": "Sub A1", "size": 4 }, { "name": "Sub A2", "size": 4 }]
+    "name": "TOPICS",
+    "children": [{
+      "name": "教育",
+      "children": []
     }, {
-      "name": "Topic B",
-      "children": [{ "name": "Sub B1", "size": 3 }, { "name": "Sub B2", "size": 3 }, {
-        "name": "Sub B3", "size": 3
-      }]
+      "name": "金融",
+      "children": []
     }, {
-      "name": "Topic C",
-      "children": [{ "name": "Sub A1", "size": 4 }, { "name": "Sub A2", "size": 4 }]
+      "name": "商科",
+      "children": []
+    }, {
+      "name": "计算机大类",
+      "children": []
+    }, {
+      "name": "医学",
+      "children": []
+    }, {
+      "name": "工程",
+      "children": []
+    }, {
+      "name": "传媒",
+      "children": []
+    }, {
+      "name": "艺术",
+      "children": []
+    }, {
+      "name": "自然科学",
+      "children": []
+    }, {
+      "name": "人文",
+      "children": []
+    }, {
+      "name": "法律",
+      "children": []
+    }, {
+      "name": "农学",
+      "children": []
+    }, {
+      "name": "数学大类",
+      "children": []
     }]
   };
 
