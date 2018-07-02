@@ -33,6 +33,7 @@
 
   Sunburst.prototype.render = function () {
     this.addConcentricCircles()
+    this.placeLogos()
 
     var arc = d3.arc()
       .startAngle(function (d) { return d.x0 })
@@ -63,13 +64,13 @@
   Sunburst.prototype.addConcentricCircles = function () {
     var configs = [{
       arcConfig: [25, 27, 0, 2 * Math.PI],
-      color: 'rgb(104, 190, 146)'
+      color: '#60B5AA'
     }, {
       arcConfig: [50, 52, 0, 2 * Math.PI],
-      color: 'rgb(228, 214, 61)'
+      color: '#E4D63D'
     }, {
       arcConfig: [75, 77, 0, 2 * Math.PI],
-      color: 'rgb(149, 149, 53)'
+      color: '#88B13E'
     }, {
       arcConfig: [500, 510, 0, 2 * Math.PI],
       color: BASIC_COLOR
@@ -90,6 +91,19 @@
         return drawArc.apply(null, d.arcConfig)
       })
       .attr('fill', function (d) { return d.color })
+  }
+
+  Sunburst.prototype.placeLogos = function () {
+    this.chartLayer.append('g')
+      .classed('logo-layer', true)
+      .selectAll('img')
+      .data(this.root.children)
+      .enter().append('img')
+      .attr('src', function (d) {
+        return 'http://127.0.0.1:8080/assets/' + d.data.key + '.svg'
+      })
+      .attr('width', 50)
+      .attr('height', 50)
   }
 
   function drawArc (innerR, outerR, startAngle, endAngle) {
