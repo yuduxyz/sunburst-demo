@@ -94,16 +94,24 @@
   }
 
   Sunburst.prototype.placeLogos = function () {
+    var logoWidth = 50
     this.chartLayer.append('g')
       .classed('logo-layer', true)
-      .selectAll('img')
+      .selectAll('image')
       .data(this.root.children)
-      .enter().append('img')
-      .attr('src', function (d) {
-        return 'http://127.0.0.1:8080/assets/' + d.data.key + '.svg'
+      .enter().append('image')
+      .attr('href', function (d) {
+        return '/assets/' + d.data.key + '.svg'
       })
-      .attr('width', 50)
-      .attr('height', 50)
+      .attr('width', logoWidth)
+      .attr('height', logoWidth)
+      .attr('transform', function (d) {
+        var alpha = d.x0
+        var r = 120
+        var xShift = r * Math.sin(alpha) - logoWidth / 2
+        var yShift = r * Math.cos(alpha) + logoWidth / 2
+        return 'translate(' + xShift + ',' + -yShift + ')'
+      })
   }
 
   function drawArc (innerR, outerR, startAngle, endAngle) {
