@@ -2,7 +2,6 @@
   // Variables
   var WIDTH = 500
   var HEIGHT = 500
-  var color = d3.scaleOrdinal(d3.schemeCategory20b)
   var BASIC_COLOR = 'rgb(204, 204, 204)'
 
   var Sunburst = function (options) {
@@ -15,7 +14,7 @@
   Sunburst.prototype.init = function () {
     // Find data root
     this.root = d3.hierarchy(this.data)
-      .sum(function (d) { return d.size || 1  })
+      .sum(function (d) { return d.size || 1 })
 
     // Size arcs
     partition(this.root.children, 155, 192)
@@ -33,25 +32,8 @@
 
   Sunburst.prototype.render = function () {
     this.addConcentricCircles()
+    this.placeIndexes()
     this.placeLogos()
-
-    var arc = d3.arc()
-      .startAngle(function (d) { return d.x0 })
-      .endAngle(function (d) { return d.x1 })
-      .innerRadius(function (d) { return d.y0 })
-      .outerRadius(function (d) { return d.y1 })
-
-    // Put it all together
-    this.chartLayer.append('g')
-      .classed('index-area', true)
-      .selectAll('path')
-      .data(this.root.descendants())
-      .enter().append('path')
-      .attr('display', function (d) { return d.depth ? null : 'none' })
-      .attr('d', arc)
-      .style('stroke-width', 5)
-      .style('stroke', '#fff')
-      .style('fill', BASIC_COLOR)
 
     return this
   }
@@ -93,6 +75,76 @@
       .attr('fill', function (d) { return d.color })
   }
 
+  Sunburst.prototype.placeIndexes = function () {
+    var arc = d3.arc()
+      .startAngle(function (d) { return d.x0 })
+      .endAngle(function (d) { return d.x1 })
+      .innerRadius(function (d) { return d.y0 })
+      .outerRadius(function (d) { return d.y1 })
+
+    // group
+    var indexEnter = this.chartLayer.selectAll('g')
+      .data(this.root.descendants())
+      .enter()
+      .append('g')
+      .classed('index-area', true)
+      .attr('data-key', function (d) { return d.data.key })
+
+    // arc
+    indexEnter.append('path')
+      .attr('display', function (d) { return d.depth ? null : 'none' })
+      .attr('d', arc)
+      .style('stroke-width', 5)
+      .style('stroke', '#fff')
+      .style('fill', BASIC_COLOR)
+
+    // line
+    indexEnter.append('path')
+      .attr('d', function (d) {
+        var alpha = d.x1 - 0.035
+        var r = d.y1 - 5
+        var len = 15
+        var fromX = r * Math.sin(alpha)
+        var fromY = -r * Math.cos(alpha)
+        var toX = (r + len) * Math.sin(alpha)
+        var toY = -(r + len) * Math.cos(alpha)
+        return drawLine([fromX, fromY], [toX, toY])
+      })
+      .attr('stroke', BASIC_COLOR)
+      .attr('stroke-width', 8)
+
+    // circle
+    indexEnter.append('path')
+      .attr('d', function (d) { return drawArc(0, 8, 0, 2 * Math.PI) })
+      .attr('transform', function (d) {
+        var alpha = d.x1 - 0.035
+        var r = d.y1 - 5
+        var len = 15
+        var shiftX = (r + len) * Math.sin(alpha)
+        var shiftY = -(r + len) * Math.cos(alpha)
+        return 'translate(' + shiftX + ',' + shiftY + ')'
+      })
+      .attr('fill', BASIC_COLOR)
+
+    // dash
+    indexEnter.append('path')
+      .attr('d', function (d) {
+        var alpha = (d.x1 - d.x0) / 2 + d.x0
+        var r = d.y1 + 20
+        var len = 270
+        var fromX = r * Math.sin(alpha)
+        var fromY = -r * Math.cos(alpha)
+        var toX = (r + len) * Math.sin(alpha)
+        var toY = -(r + len) * Math.cos(alpha)
+        return drawLine([fromX, fromY], [toX, toY])
+      })
+      .attr('stroke', BASIC_COLOR)
+      .attr('stroke-width', 4)
+      .attr('stroke-dasharray', '1, 12')
+      .attr('stroke-linecap', 'round')
+      
+  }
+
   Sunburst.prototype.placeLogos = function () {
     var logoWidth = 50
     this.chartLayer.append('g')
@@ -114,7 +166,7 @@
       })
   }
 
-  function drawArc (innerR, outerR, startAngle, endAngle) {
+  function drawArc(innerR, outerR, startAngle, endAngle) {
     var arc = d3.arc()
       .innerRadius(innerR)
       .outerRadius(outerR)
@@ -124,8 +176,12 @@
     return arc()
   }
 
+  function drawLine(from, to) {
+    return 'M' + from[0] + ',' + from[1] + 'L' + to[0] + ',' + to[1]
+  }
+
   /** d3.partition 不能对奇数个节点均匀分布成环，自己实现之 */
-  function partition (data, innerR, outerR) {
+  function partition(data, innerR, outerR) {
     if (!data.length) {
       return
     }
