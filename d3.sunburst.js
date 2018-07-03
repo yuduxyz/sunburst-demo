@@ -3,6 +3,7 @@
   var WIDTH = 500
   var HEIGHT = 500
   var BASIC_COLOR = 'rgb(204, 204, 204)'
+  var HIGHLIGHT_COLOR = '#88b13e'
 
   var Sunburst = function (options) {
     this.width = options.width || WIDTH
@@ -39,6 +40,34 @@
   }
 
   Sunburst.prototype.bindEvents = function () {
+    d3.selectAll('.name-group').on('click', function (d, i) {
+      var key = d.data.key
+      d3.selectAll('.stroke-highlight').attr('stroke', BASIC_COLOR)
+      d3.selectAll('.fill-highlight').attr('fill', BASIC_COLOR)
+      d3.selectAll('[data-key="' + key + '"] path.fill-highlight')
+        .attr('fill', HIGHLIGHT_COLOR)
+      d3.selectAll('[data-key="' + key + '"] path.stroke-highlight')
+        .attr('stroke', HIGHLIGHT_COLOR)
+      
+      d3.selectAll('.dash').each(function (d, ii, g) {
+        if (i === 0) {
+          d3.select(g[g.length - 1])
+            .attr('stroke', HIGHLIGHT_COLOR)
+        } else {
+          d3.select(g[i - 1])
+            .attr('stroke', HIGHLIGHT_COLOR)
+        }
+      })
+
+      d3.selectAll('.logo')
+        .attr('href', function (d) {
+          return '/assets/' + d.data.key + '.svg'
+        })
+      d3.select('.logo[data-key="' + key + '"]')
+        .attr('href', function (d) {
+          return '/assets/' + d.data.key + '_highlight.svg'
+        })
+    })
 
     return this
   }
@@ -77,8 +106,8 @@
 
   Sunburst.prototype.placeIndexes = function () {
     var arc = d3.arc()
-      .startAngle(function (d) { return d.x0 })
-      .endAngle(function (d) { return d.x1 })
+      .startAngle(function (d) { return 2 * d.x0 - d.x1 })
+      .endAngle(function (d) { return d.x0 })
       .innerRadius(function (d) { return d.y0 })
       .outerRadius(function (d) { return d.y1 })
 
@@ -92,16 +121,18 @@
 
     // arc
     indexEnter.append('path')
+      .classed('fill-highlight', true)
       .attr('display', function (d) { return d.depth ? null : 'none' })
       .attr('d', arc)
       .style('stroke-width', 5)
       .style('stroke', '#fff')
-      .style('fill', BASIC_COLOR)
+      .attr('fill', BASIC_COLOR)
 
     // line
     indexEnter.append('path')
+      .classed('stroke-highlight', true)
       .attr('d', function (d) {
-        var alpha = d.x1 - 0.035
+        var alpha = d.x0 - 0.035
         var r = d.y1 - 5
         var len = 15
         var fromX = r * Math.sin(alpha)
@@ -115,9 +146,10 @@
 
     // circle
     indexEnter.append('path')
+      .classed('fill-highlight', true)
       .attr('d', function (d) { return drawArc(0, 8, 0, 2 * Math.PI) })
       .attr('transform', function (d) {
-        var alpha = d.x1 - 0.035
+        var alpha = d.x0 - 0.035
         var r = d.y1 - 5
         var len = 15
         var shiftX = (r + len) * Math.sin(alpha)
@@ -128,6 +160,7 @@
 
     // dash
     indexEnter.append('path')
+      .attr('class', 'dash stroke-highlight')
       .attr('d', function (d) {
         var alpha = (d.x1 - d.x0) / 2 + d.x0
         var r = d.y1 + 30
@@ -144,7 +177,12 @@
       .attr('stroke-linecap', 'round')
       
     // name
-    indexEnter.append('path')
+    var nameEnter = indexEnter.append('g')
+      .classed('name-group', true)
+      .style('cursor', 'pointer')
+      .attr('data-key', function (d) { return d.data.key })
+    nameEnter.append('path')
+      .classed('fill-highlight', true)
       .attr('d', function (d) { return drawArc(0, 45, 0, 2 * Math.PI) })
       .attr('transform', function (d) {
         var alpha = d.x0
@@ -154,7 +192,7 @@
         return 'translate(' + shiftX + ',' + shiftY + ')'
       })
       .attr('fill', BASIC_COLOR)
-    indexEnter.append('path')
+    nameEnter.append('path')
       .attr('d', function (d) { return drawArc(35, 38, 0, 2 * Math.PI) })
       .attr('transform', function (d) {
         var alpha = d.x0
@@ -165,7 +203,7 @@
       })
       .attr('fill', '#fff')
     // text
-    indexEnter.append('text')
+    nameEnter.append('text')
       .attr('transform', function (d) {
         var alpha = d.x0
         var r = d.y1 + 65
@@ -215,6 +253,8 @@
       .selectAll('image')
       .data(this.root.children)
       .enter().append('image')
+      .classed('logo', true)
+      .attr('data-key', function (d) { return d.data.key })
       .attr('href', function (d) {
         return '/assets/' + d.data.key + '.svg'
       })
@@ -269,6 +309,6 @@
     var sunburst = new Sunburst(options)
     sunburst.init()
       .render()
-    // .bindEvents()
+      .bindEvents()
   }
 })()
