@@ -130,7 +130,7 @@
     indexEnter.append('path')
       .attr('d', function (d) {
         var alpha = (d.x1 - d.x0) / 2 + d.x0
-        var r = d.y1 + 20
+        var r = d.y1 + 30
         var len = 270
         var fromX = r * Math.sin(alpha)
         var fromY = -r * Math.cos(alpha)
@@ -143,6 +143,69 @@
       .attr('stroke-dasharray', '1, 12')
       .attr('stroke-linecap', 'round')
       
+    // name
+    indexEnter.append('path')
+      .attr('d', function (d) { return drawArc(0, 45, 0, 2 * Math.PI) })
+      .attr('transform', function (d) {
+        var alpha = d.x0
+        var r = d.y1 + 65
+        var shiftX = r * Math.sin(alpha)
+        var shiftY = -r * Math.cos(alpha)
+        return 'translate(' + shiftX + ',' + shiftY + ')'
+      })
+      .attr('fill', BASIC_COLOR)
+    indexEnter.append('path')
+      .attr('d', function (d) { return drawArc(35, 38, 0, 2 * Math.PI) })
+      .attr('transform', function (d) {
+        var alpha = d.x0
+        var r = d.y1 + 65
+        var shiftX = r * Math.sin(alpha)
+        var shiftY = -r * Math.cos(alpha)
+        return 'translate(' + shiftX + ',' + shiftY + ')'
+      })
+      .attr('fill', '#fff')
+    // text
+    indexEnter.append('text')
+      .attr('transform', function (d) {
+        var alpha = d.x0
+        var r = d.y1 + 65
+        var shiftX = r * Math.sin(alpha)
+        var shiftY = -r * Math.cos(alpha)
+        return 'translate(' + shiftX + ',' + shiftY + ')'
+      })
+      .classed('index-text', true)
+      .each(function (d, i, g) {
+        var name = d.data.name
+        var el = d3.select(g[i])
+        var nameArr = []
+        if (name.length === 4) {
+          nameArr = [name.slice(0, 2), name.slice(2)]
+        } else {
+          var i = 0
+          while (i < name.length) {
+            nameArr.push(name.slice(i, i + 3))
+            i += 3
+          }
+        }
+        var fontSize = 18
+        el.selectAll('tspan')
+          .data(nameArr)
+          .enter()
+          .append('tspan')
+          .attr('font-size', fontSize)
+          .text(function (d) { return d })
+          .attr('x', function (d, i) {
+            return -d.length * fontSize / 2
+          })
+          .attr('y', function (d, i) {
+            if (nameArr.length === 1) {
+              return fontSize / 2
+            }
+            var shiftY = i ? 2 : -2
+            return fontSize * i + shiftY
+          })
+          .attr('fill', '#fff')
+      })
   }
 
   Sunburst.prototype.placeLogos = function () {
