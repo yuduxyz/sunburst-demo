@@ -272,8 +272,13 @@
       })
   }
 
+  /**
+   * 使用了一个简单排列算法
+   * 在扇形区域假想一个虚拟的内切圆，将专业尽量的排列在内切圆内部
+   */
   Sunburst.prototype.placeMajors = function () {
-    this.chartLayer.append('g')
+    var majorDis = 400 //  专业虚拟圆的圆心离同心圆圆心的距离
+    var majorEnter = this.chartLayer.append('g')
       .classed('major-container', true)
       .selectAll('g')
       .data(this.root.children)
@@ -281,27 +286,57 @@
       .append('g')
       .attr('transform', function (d) {
         var alpha = d.x0
-        var r = 400
-        var shiftX = r * Math.sin(alpha)
-        var shiftY = -r * Math.cos(alpha)
+        var shiftX = majorDis * Math.sin(alpha)
+        var shiftY = -majorDis * Math.cos(alpha)
         return 'translate(' + shiftX + ',' + shiftY + ')'
       })
       .each(function (d, i, g) {
         var majors = d.data.majors
         var el = g[i]
         var fontSize = 14
+
+        var majorRadius = 85  // 虚拟圆半径
+        // 虚拟圆方程 x ^ 2 + y ^ 2 = majorRadius ^ 2
+        var x = 0
+        var y = - majorRadius
+
+        var positionList = majors.map(function (m, i) {
+          var pos = { x: x, y: y }
+          getNewPosition(pos, m)
+          x = pos.x + m.length * fontSize + 10  // 专业之间有 10px 间距
+          y = pos.y
+          
+          return pos
+        })
+
         d3.select(el).selectAll('text')
           .data(majors)
           .enter()
           .append('text')
           .text(function (d) { return d })
           .attr('font-size', fontSize)
-          .attr('x', function (d) {
-            return -d.length * fontSize / 2
+          .attr('x', function (d, i) {
+            return positionList[i].x
           })
           .attr('y', function (d, i) {
-            return fontSize * i + 5 * i
+            return positionList[i].y
           })
+
+        function getNewPosition (pos, name) {
+          var x1 = getXDis(pos.y)  // 右
+          var x2 = -getXDis(pos.y) // 左
+          var len = name.length * fontSize
+          pos.x = pos.x < x2 ? x2 : pos.x
+          if (pos.x + len > x1) {
+            pos.y += (fontSize + 10)  // 两行间有 10px 间距
+            pos.x = -getXDis(pos.y)
+            getNewPosition(pos, name)
+          }
+        }
+
+        function getXDis (y) {
+          return Math.sqrt(majorRadius * majorRadius - y * y)
+        }
       })
   }
 
