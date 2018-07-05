@@ -35,6 +35,7 @@
     this.addConcentricCircles()
     this.placeIndexes()
     this.placeLogos()
+    this.placeMajors()
 
     return this
   }
@@ -112,8 +113,10 @@
       .outerRadius(function (d) { return d.y1 })
 
     // group
-    var indexEnter = this.chartLayer.selectAll('g')
-      .data(this.root.descendants())
+    var indexEnter = this.chartLayer.append('g')
+      .classed('index-container', true)
+      .selectAll('g')
+      .data(this.root.children)
       .enter()
       .append('g')
       .classed('index-area', true)
@@ -237,9 +240,9 @@
           })
           .attr('y', function (d, i) {
             if (nameArr.length === 1) {
-              return fontSize / 2
+              return fontSize / 2 - 2 // 位置微调
             }
-            var shiftY = i ? 2 : -2
+            var shiftY = i ? 2 : -4 // 位置微调
             return fontSize * i + shiftY
           })
           .attr('fill', '#fff')
@@ -266,6 +269,39 @@
         var xShift = r * Math.sin(alpha) - logoWidth / 2
         var yShift = r * Math.cos(alpha) + logoWidth / 2
         return 'translate(' + xShift + ',' + -yShift + ')'
+      })
+  }
+
+  Sunburst.prototype.placeMajors = function () {
+    this.chartLayer.append('g')
+      .classed('major-container', true)
+      .selectAll('g')
+      .data(this.root.children)
+      .enter()
+      .append('g')
+      .attr('transform', function (d) {
+        var alpha = d.x0
+        var r = 400
+        var shiftX = r * Math.sin(alpha)
+        var shiftY = -r * Math.cos(alpha)
+        return 'translate(' + shiftX + ',' + shiftY + ')'
+      })
+      .each(function (d, i, g) {
+        var majors = d.data.majors
+        var el = g[i]
+        var fontSize = 14
+        d3.select(el).selectAll('text')
+          .data(majors)
+          .enter()
+          .append('text')
+          .text(function (d) { return d })
+          .attr('font-size', fontSize)
+          .attr('x', function (d) {
+            return -d.length * fontSize / 2
+          })
+          .attr('y', function (d, i) {
+            return fontSize * i + 5 * i
+          })
       })
   }
 
