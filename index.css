@@ -32,3 +32,18 @@ li {
   background-color: #E4D63D;
   cursor: pointer;
 }
+
+.project-detail {
+  position: absolute;
+  padding: 16px;
+  background: #dedede;
+  border-radius: 4px;
+}
+
+.project-detail-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #fff;
+  background: #60B5AA;
+  text-decoration: none;
+}

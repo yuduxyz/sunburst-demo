@@ -70,8 +70,12 @@
     d3.select('body').on('click', function () {
       // console.log(d3.event) // 事件对象
       var className = d3.event.target.className || {}
+      if (className && className.indexOf && className.indexOf('project-item') > -1) {
+        return
+      }
       if (!className.baseVal || className.baseVal.indexOf('major-item') === -1) {
         d3.select('.project-list').remove()
+        d3.selectAll('.project-detail').remove()
         captureMouseMove = true
         activeMajor = ''
         _this.highlightMajor()
@@ -454,6 +458,18 @@
       }
       return shiftY + 'px'
     })
+
+    // bind events
+    d3.selectAll('.project-item').on('mouseover', function (d) {
+      var e = d3.event
+      d3.json('./attribute.json?key=' + d, function (data) {
+        if (data.status) {
+          throw Error(data.msg)
+          return
+        }
+        _this.renderProjectDetail(data.data, e)
+      })
+    })
   }
 
   /**
@@ -510,6 +526,60 @@
     }
     d3.select('.majors line[data-key="' + activeMajor + '"]')
       .attr('stroke', '#60B5AA')
+  }
+
+  Sunburst.prototype.renderProjectDetail = function (data, e) {
+    var _this = this
+    var width = 400
+    d3.selectAll('.project-detail')
+        .transition()
+        .duration(DURATION / 2)
+        .style('opacity', 0)
+        .remove()
+
+    var projectDetail = d3.select('body').append('div')
+      .classed('project-detail', true)
+      .style('max-width', width + 'px')
+      .style('left', function () {
+        var projectList = d3.select('.project-list').node()
+        var projectListWidth = projectList.clientWidth
+        var projectListLeft = parseFloat(projectList.style.left)
+        if (e.clientX > _this.width / 2) {
+          return projectListLeft - width - 40 + 'px'
+        } else {
+          return projectListLeft + projectListWidth + 20 + 'px'
+        }
+      })
+    projectDetail.style('opacity', 0)
+      .transition()
+      .duration(DURATION / 2)
+      .style('opacity', 1)
+    data.forEach(function (item) {
+      if (item.name === '查看该项目') {
+        projectDetail.append('p')
+          .append('a')
+          .text(item.name)
+          .attr('href', item.value)
+          .classed('project-detail-btn', true)
+      } else {
+        projectDetail.append('p')
+          .text(item.name)
+        projectDetail.append('p')
+          .text(item.value)
+      }
+    })
+
+    projectDetail.style('top', function () {
+      var projectList = d3.select('.project-list').node()
+      var projectListTop = parseFloat(projectList.style.top)
+      var shiftY = projectListTop
+      var r = shiftY + this.clientHeight - _this.height
+      console.log(shiftY, this.clientHeight, _this.height)
+      if (r > 0) {
+        shiftY -= r
+      }
+      return shiftY + 'px'
+    })
   }
 
   function drawArc (innerR, outerR, startAngle, endAngle) {
