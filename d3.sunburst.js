@@ -23,7 +23,7 @@
       .sum(function (d) { return d.size || 1 })
 
     // Size arcs
-    partition(this.root.children, 105, 130)
+    partition(this.root.children, 155, 192)
 
     // Create primary <g> element
     this.chartLayer = d3.select(this.options.el)
@@ -82,10 +82,10 @@
       if (!captureMouseMove) return
 
       var innerR = 140
-      var outerR = 340
+      var outerR = 500
       var e = d3.event
-      var shiftX = e.clientX - _this.width / 2
-      var shiftY = -e.clientY + _this.height / 2
+      var shiftX = e.offsetX - _this.width / 2
+      var shiftY = -e.offsetY + _this.height / 2
       var alpha = Math.atan(shiftX / shiftY)
       if (shiftX > 0 && shiftY < 0 || shiftX < 0 && shiftY < 0) {
         alpha = Math.PI + alpha
@@ -126,22 +126,22 @@
 
   Sunburst.prototype.addConcentricCircles = function () {
     var configs = [{
-      arcConfig: [17, 18, 0, 2 * Math.PI],
+      arcConfig: [25, 27, 0, 2 * Math.PI],
       color: '#60B5AA'
     }, {
-      arcConfig: [34, 35, 0, 2 * Math.PI],
+      arcConfig: [50, 52, 0, 2 * Math.PI],
       color: '#E4D63D'
     }, {
-      arcConfig: [50, 51, 0, 2 * Math.PI],
+      arcConfig: [75, 77, 0, 2 * Math.PI],
       color: '#88B13E'
     }, {
-      arcConfig: [335, 342, 0, 2 * Math.PI],
+      arcConfig: [500, 510, 0, 2 * Math.PI],
       color: BASIC_COLOR
     }, {
-      arcConfig: [422, 509, 0, 2 * Math.PI],
+      arcConfig: [630, 760, 0, 2 * Math.PI],
       color: BASIC_COLOR
     }, {
-      arcConfig: [596, 737, 0, 2 * Math.PI],
+      arcConfig: [890, 1100, 0, 2 * Math.PI],
       color: BASIC_COLOR
     }]
     this.chartLayer.append('g')
@@ -186,9 +186,9 @@
     indexEnter.append('path')
       .classed('stroke-highlight', true)
       .attr('d', function (d) {
-        var alpha = d.x0 - 0.05
+        var alpha = d.x0 - 0.035
         var r = d.y1 - 5
-        var len = 10
+        var len = 15
         var fromX = r * Math.sin(alpha)
         var fromY = -r * Math.cos(alpha)
         var toX = (r + len) * Math.sin(alpha)
@@ -203,7 +203,7 @@
       .classed('fill-highlight', true)
       .attr('d', function (d) { return drawArc(0, 8, 0, 2 * Math.PI) })
       .attr('transform', function (d) {
-        var alpha = d.x0 - 0.05
+        var alpha = d.x0 - 0.035
         var r = d.y1 - 5
         var len = 15
         var shiftX = (r + len) * Math.sin(alpha)
@@ -218,7 +218,7 @@
       .attr('d', function (d) {
         var alpha = (d.x1 - d.x0) / 2 + d.x0
         var r = d.y1 + 30
-        var len = 150
+        var len = 270
         var fromX = r * Math.sin(alpha)
         var fromY = -r * Math.cos(alpha)
         var toX = (r + len) * Math.sin(alpha)
@@ -226,8 +226,8 @@
         return drawLine([fromX, fromY], [toX, toY])
       })
       .attr('stroke', BASIC_COLOR)
-      .attr('stroke-width', 2.5)
-      .attr('stroke-dasharray', '1, 8')
+      .attr('stroke-width', 4)
+      .attr('stroke-dasharray', '1, 12')
       .attr('stroke-linecap', 'round')
 
     // name
@@ -237,20 +237,20 @@
       .attr('data-key', function (d) { return d.data.key })
     nameEnter.append('path')
       .classed('fill-highlight', true)
-      .attr('d', function (d) { return drawArc(0, 30, 0, 2 * Math.PI) })
+      .attr('d', function (d) { return drawArc(0, 45, 0, 2 * Math.PI) })
       .attr('transform', function (d) {
         var alpha = d.x0
-        var r = d.y1 + 50
+        var r = d.y1 + 65
         var shiftX = r * Math.sin(alpha)
         var shiftY = -r * Math.cos(alpha)
         return 'translate(' + shiftX + ',' + shiftY + ')'
       })
       .attr('fill', BASIC_COLOR)
     nameEnter.append('path')
-      .attr('d', function (d) { return drawArc(23, 25, 0, 2 * Math.PI) })
+      .attr('d', function (d) { return drawArc(35, 38, 0, 2 * Math.PI) })
       .attr('transform', function (d) {
         var alpha = d.x0
-        var r = d.y1 + 50
+        var r = d.y1 + 65
         var shiftX = r * Math.sin(alpha)
         var shiftY = -r * Math.cos(alpha)
         return 'translate(' + shiftX + ',' + shiftY + ')'
@@ -260,7 +260,7 @@
     nameEnter.append('text')
       .attr('transform', function (d) {
         var alpha = d.x0
-        var r = d.y1 + 50
+        var r = d.y1 + 65
         var shiftX = r * Math.sin(alpha)
         var shiftY = -r * Math.cos(alpha)
         return 'translate(' + shiftX + ',' + shiftY + ')'
@@ -279,7 +279,7 @@
             i += 3
           }
         }
-        var fontSize = 12
+        var fontSize = 18
         el.selectAll('tspan')
           .data(nameArr)
           .enter()
@@ -301,7 +301,7 @@
   }
 
   Sunburst.prototype.placeLogos = function () {
-    var logoWidth = 32
+    var logoWidth = 50
     this.chartLayer.append('g')
       .classed('logo-layer', true)
       .selectAll('image')
@@ -316,7 +316,7 @@
       .attr('height', logoWidth)
       .attr('transform', function (d) {
         var alpha = d.x0
-        var r = 80
+        var r = 120
         var xShift = r * Math.sin(alpha) - logoWidth / 2
         var yShift = r * Math.cos(alpha) + logoWidth / 2
         return 'translate(' + xShift + ',' + -yShift + ')'
@@ -328,9 +328,9 @@
    * 在扇形区域假想一个虚拟的内切圆，将专业尽量的排列在内切圆内部
    */
   Sunburst.prototype.placeMajors = function () {
-    var MAJORDIS = 275 //  专业虚拟圆的圆心离同心圆圆心的距离
-    var fontSize = 10
-    var MAJORRADIUS = 55  // 虚拟圆半径
+    var MAJORDIS = 400 //  专业虚拟圆的圆心离同心圆圆心的距离
+    var fontSize = 14
+    var MAJORRADIUS = 85  // 虚拟圆半径
     var majorEnter = this.chartLayer.append('g')
       .classed('major-container', true)
       .selectAll('g')
@@ -344,7 +344,7 @@
       .attr('transform', function (d) {
         var alpha = d.x0
         if (d.data.majors.length > 8) {
-          majorDis = 280
+          majorDis = 420
         } else {
           majorDis = MAJORDIS
         }
@@ -354,7 +354,7 @@
       })
       .each(function (d, i, g) {
         if (d.data.majors.length > 8) {
-          majorRadius = 60
+          majorRadius = 90
         } else {
           majorRadius = MAJORRADIUS
         }
@@ -372,7 +372,7 @@
         var positionList = majors.map(function (m, i) {
           var pos = { x: x, y: y }
           getNewPosition(pos, m)
-          x = pos.x + m.length * fontSize + 20  // 专业之间有 10px 间距
+          x = pos.x + m.length * fontSize + 20  // 专业之间有 20px 间距
           y = pos.y
 
           return pos
@@ -423,7 +423,7 @@
       var len = name.length * fontSize
       pos.x = pos.x < x2 ? x2 : pos.x
       if (pos.x + len > x1 + 10) {
-        pos.y += (fontSize + 5)  // 两行间有 10px 间距
+        pos.y += (fontSize + 10)  // 两行间有 10px 间距
         pos.x = -getXDis(pos.y)
         getNewPosition(pos, name)
       }
@@ -435,11 +435,12 @@
   }
 
   Sunburst.prototype.renderProjectList = function (data, e) {
+    var _this = this
     d3.selectAll('.project-list').remove()
     var projectList = d3.select('body')
       .append('ul')
       .classed('project-list', true)
-      .style('left', e.clientX + 20 + 'px')
+      .style('left', e.offsetX + 20 + 'px')
     projectList.selectAll('li')
       .data(data)
       .enter()
@@ -447,9 +448,9 @@
       .classed('project-item', true)
       .text(function (d) { return d })
     projectList.style('top', function () {
-      var shiftY = e.clientY + 20
-      if (this.clientHeight + shiftY > window.innerHeight) {
-        shiftY = e.clientY - this.clientHeight - 20
+      var shiftY = e.offsetY + 20
+      if (this.clientHeight + shiftY > _this.height) {
+        shiftY = e.offsetY - this.clientHeight - 20
       }
       return shiftY + 'px'
     })

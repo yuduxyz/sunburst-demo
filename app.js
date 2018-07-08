@@ -37,7 +37,7 @@
     }, {
       "name": "自然科学",
       "key": "science",
-      "majors": ['生物统计/生物信息', '化学', '生物学', '营养学', '物理学', '神经学']
+      "majors": ['化学', '生物统计/生物信息', '生物学', '营养学', '物理学', '神经学']
     }, {
       "name": "人文",
       "key": "humanity",
@@ -62,6 +62,6 @@
     el: svg,                    // 必须
     data: nodeData,             // 必须
     width: window.innerWidth,   // 非必须，默认 500px
-    height: window.innerHeight  // 非必须，默认 500px
+    height: window.innerHeight > 970 ? window.innerHeight : 970  // 非必须，默认 500px；这里设置最小高度为 970
   })
 })()
