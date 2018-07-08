@@ -69,8 +69,8 @@
 
     d3.select('body').on('click', function () {
       // console.log(d3.event) // 事件对象
-      var classList = d3.event.target.classList
-      if (!classList.contains('major-item')) {
+      var className = d3.event.target.className || {}
+      if (!className.baseVal || className.baseVal.indexOf('major-item') === -1) {
         d3.select('.project-list').remove()
         captureMouseMove = true
         activeMajor = ''
