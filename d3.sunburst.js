@@ -435,6 +435,7 @@
   }
 
   Sunburst.prototype.renderProjectList = function (data, e) {
+    d3.selectAll('.project-list').remove()
     var projectList = d3.select('body')
       .append('ul')
       .classed('project-list', true)
