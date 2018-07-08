@@ -74,6 +74,7 @@
         d3.select('.project-list').remove()
         captureMouseMove = true
         activeMajor = ''
+        _this.highlightMajor()
       }
     })
 
@@ -339,6 +340,7 @@
       .classed('majors', true)
       .attr('data-key', function (d) { return d.data.key })
       .attr('display', 'none')
+      .style('opacity', 0)
       .attr('transform', function (d) {
         var alpha = d.x0
         if (d.data.majors.length > 8) {
@@ -465,8 +467,11 @@
     activeKey = key
     d3.selectAll('.majors')
       .attr('display', 'none')
+      .style('opacity', 0)
     d3.select('.majors[data-key="' + key + '"]')
       .attr('display', 'block')
+      .transition().duration(DURATION)
+      .style('opacity', 1)
     d3.selectAll('.stroke-highlight').attr('stroke', BASIC_COLOR)
     d3.selectAll('.fill-highlight').attr('fill', BASIC_COLOR)
     d3.selectAll('[data-key="' + key + '"] path.fill-highlight')
