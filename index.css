@@ -2,3 +2,30 @@ body {
   margin: 0;
   overflow: hidden;
 }
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+li {
+  list-style: none;
+}
+
+.project-list {
+  position: absolute;
+  padding: 16px;
+  border-radius: 4px;
+  background-color: #dedede;
+}
+
+.project-item {
+  margin: 4px 0;
+  padding: 4px 16px;
+  font-size: 12px;
+  color: #fff;
+  background-color: #60B5AA;
+}
+.project-item:hover {
+  background-color: #E4D63D;
+  cursor: pointer;
+}

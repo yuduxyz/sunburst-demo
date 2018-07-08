@@ -4,6 +4,11 @@
   var HEIGHT = 500
   var BASIC_COLOR = 'rgb(204, 204, 204)'
   var HIGHLIGHT_COLOR = '#88b13e'
+  var DURATION = 500
+
+  var captureMouseMove = true
+  var activeKey = ''
+  var activeMajor = ''
 
   var Sunburst = function (options) {
     this.width = options.width || WIDTH
@@ -19,7 +24,6 @@
 
     // Size arcs
     partition(this.root.children, 105, 130)
-    console.log(this.root)
 
     // Create primary <g> element
     this.chartLayer = d3.select(this.options.el)
@@ -41,42 +45,79 @@
   }
 
   Sunburst.prototype.bindEvents = function () {
+    var _this = this
     d3.selectAll('.name-group').on('click', function (d, i) {
-      var key = d.data.key
-      d3.selectAll('.majors').attr('display', 'none')
-      d3.select('.majors[data-key="' + key + '"]').attr('display', 'block')
-      d3.selectAll('.stroke-highlight').attr('stroke', BASIC_COLOR)
-      d3.selectAll('.fill-highlight').attr('fill', BASIC_COLOR)
-      d3.selectAll('[data-key="' + key + '"] path.fill-highlight')
-        .attr('fill', HIGHLIGHT_COLOR)
-      d3.selectAll('[data-key="' + key + '"] path.stroke-highlight')
-        .attr('stroke', HIGHLIGHT_COLOR)
-      
-      d3.selectAll('.dash').each(function (d, ii, g) {
-        if (i === 0) {
-          d3.select(g[g.length - 1])
-            .attr('stroke', HIGHLIGHT_COLOR)
-        } else {
-          d3.select(g[i - 1])
-            .attr('stroke', HIGHLIGHT_COLOR)
-        }
-      })
-
-      d3.selectAll('.logo')
-        .attr('href', function (d) {
-          return '/assets/' + d.data.key + '.svg'
-        })
-      d3.select('.logo[data-key="' + key + '"]')
-        .attr('href', function (d) {
-          return '/assets/' + d.data.key + '_highlight.svg'
-        })
+      _this.showGroup(d.data.key, i)
+      captureMouseMove = false
     })
 
     d3.selectAll('.majors text').on('click', function (d, i) {
-      d3.selectAll('.majors line')
-        .attr('stroke', '#969696')
-      d3.select('.majors line[data-key="' + d + '"]')
-        .attr('stroke', '#60B5AA')
+      var e = d3.event
+      activeMajor = d
+      _this.highlightMajor(d)
+
+      d3.json('./projects.json?key=' + d, function (data) {
+        if (data.status) {
+          throw Error(data.msg)
+          return
+        }
+        _this.renderProjectList(data.data, e)
+      })
+
+      captureMouseMove = false
+    })
+
+    d3.select('body').on('click', function () {
+      // console.log(d3.event) // 事件对象
+      var classList = d3.event.target.classList
+      if (!classList.contains('major-item')) {
+        d3.select('.project-list').remove()
+        captureMouseMove = true
+        activeMajor = ''
+      }
+    })
+
+    d3.selectAll('body').on('mousemove', function () {
+      if (!captureMouseMove) return
+
+      var innerR = 140
+      var outerR = 340
+      var e = d3.event
+      var shiftX = e.clientX - _this.width / 2
+      var shiftY = -e.clientY + _this.height / 2
+      var alpha = Math.atan(shiftX / shiftY)
+      if (shiftX > 0 && shiftY < 0 || shiftX < 0 && shiftY < 0) {
+        alpha = Math.PI + alpha
+      }
+      if (shiftX < 0 && shiftY > 0) {
+        alpha = 2 * Math.PI + alpha
+      }
+      var r = Math.sqrt(shiftX * shiftX + shiftY * shiftY)
+      if (r > outerR || r < innerR) {
+        return
+      }
+      var curKey = ''
+      var curIndex = null
+      d3.selectAll('.index-area')
+        .each(function (d, i, g) {
+          var minRadian = d.x0 - (d.x1 - d.x0) / 2
+          var maxRadian = d.x1 - (d.x1 - d.x0) / 2
+          if (minRadian < alpha && maxRadian > alpha) {
+            curKey = d.data.key
+            curIndex = i
+          }
+        })
+
+      if (curKey) {
+        _this.showGroup(curKey, curIndex)
+      }
+    })
+
+    d3.selectAll('.majors text').on('mouseover', function (d) {
+      _this.highlightMajor(d)
+    })
+    d3.selectAll('.majors text').on('mouseleave', function () {
+      _this.highlightMajor()
     })
 
     return this
@@ -187,7 +228,7 @@
       .attr('stroke-width', 2.5)
       .attr('stroke-dasharray', '1, 8')
       .attr('stroke-linecap', 'round')
-      
+
     // name
     var nameEnter = indexEnter.append('g')
       .classed('name-group', true)
@@ -331,7 +372,7 @@
           getNewPosition(pos, m)
           x = pos.x + m.length * fontSize + 20  // 专业之间有 10px 间距
           y = pos.y
-          
+
           return pos
         })
 
@@ -339,6 +380,7 @@
           .data(majors)
           .enter()
           .append('line')
+          .classed('major-item', true)
           .attr('data-key', function (d) { return d })
           .attr('x1', function (d, i) {
             return positionList[i].x
@@ -359,6 +401,7 @@
           .data(majors)
           .enter()
           .append('text')
+          .classed('major-item', true)
           .text(function (d) { return d })
           .attr('font-size', fontSize)
           .style('cursor', 'pointer')
@@ -372,24 +415,97 @@
           .attr('fill', '#fff')
       })
 
-      function getNewPosition (pos, name) {
-        var x1 = getXDis(pos.y)  // 右
-        var x2 = -getXDis(pos.y) // 左
-        var len = name.length * fontSize
-        pos.x = pos.x < x2 ? x2 : pos.x
-        if (pos.x + len > x1 + 10) {
-          pos.y += (fontSize + 5)  // 两行间有 10px 间距
-          pos.x = -getXDis(pos.y)
-          getNewPosition(pos, name)
-        }
+    function getNewPosition (pos, name) {
+      var x1 = getXDis(pos.y)  // 右
+      var x2 = -getXDis(pos.y) // 左
+      var len = name.length * fontSize
+      pos.x = pos.x < x2 ? x2 : pos.x
+      if (pos.x + len > x1 + 10) {
+        pos.y += (fontSize + 5)  // 两行间有 10px 间距
+        pos.x = -getXDis(pos.y)
+        getNewPosition(pos, name)
       }
+    }
 
-      function getXDis (y) {
-        return Math.sqrt(majorRadius * majorRadius - y * y)
-      }
+    function getXDis (y) {
+      return Math.sqrt(majorRadius * majorRadius - y * y)
+    }
   }
 
-  function drawArc(innerR, outerR, startAngle, endAngle) {
+  Sunburst.prototype.renderProjectList = function (data, e) {
+    var projectList = d3.select('body')
+      .append('ul')
+      .classed('project-list', true)
+      .style('left', e.clientX + 20 + 'px')
+    projectList.selectAll('li')
+      .data(data)
+      .enter()
+      .append('li')
+      .classed('project-item', true)
+      .text(function (d) { return d })
+    projectList.style('top', function () {
+      var shiftY = e.clientY + 20
+      if (this.clientHeight + shiftY > window.innerHeight) {
+        shiftY = e.clientY - this.clientHeight - 20
+      }
+      return shiftY + 'px'
+    })
+  }
+
+  /**
+   * 展示、隐藏领域
+   * @param {String} key 需要展示的group名称, eg: education, finance
+   * @param {Number} i 需要展示的group下标，用于确定要高亮的虚线
+   */
+  Sunburst.prototype.showGroup = function (key, i) {
+    if (activeKey === key) {
+      return
+    }
+
+    activeKey = key
+    d3.selectAll('.majors')
+      .attr('display', 'none')
+    d3.select('.majors[data-key="' + key + '"]')
+      .attr('display', 'block')
+    d3.selectAll('.stroke-highlight').attr('stroke', BASIC_COLOR)
+    d3.selectAll('.fill-highlight').attr('fill', BASIC_COLOR)
+    d3.selectAll('[data-key="' + key + '"] path.fill-highlight')
+      .attr('fill', HIGHLIGHT_COLOR)
+    d3.selectAll('[data-key="' + key + '"] path.stroke-highlight')
+      .attr('stroke', HIGHLIGHT_COLOR)
+
+    d3.selectAll('.dash').each(function (d, ii, g) {
+      if (i === 0) {
+        d3.select(g[g.length - 1])
+          .attr('stroke', HIGHLIGHT_COLOR)
+      } else {
+        d3.select(g[i - 1])
+          .attr('stroke', HIGHLIGHT_COLOR)
+      }
+    })
+
+    d3.selectAll('.logo')
+      .attr('href', function (d) {
+        return '/assets/' + d.data.key + '.svg'
+      })
+    d3.select('.logo[data-key="' + key + '"]')
+      .attr('href', function (d) {
+        return '/assets/' + d.data.key + '_highlight.svg'
+      })
+  }
+
+  Sunburst.prototype.highlightMajor = function (key) {
+    d3.selectAll('.majors line')
+      .attr('stroke', '#969696')
+    if (key) {
+      d3.select('.majors line[data-key="' + key + '"]')
+        .attr('stroke', '#60B5AA')
+    }
+    d3.select('.majors line[data-key="' + activeMajor + '"]')
+      .attr('stroke', '#60B5AA')
+  }
+
+  function drawArc (innerR, outerR, startAngle, endAngle) {
     var arc = d3.arc()
       .innerRadius(innerR)
       .outerRadius(outerR)
@@ -399,12 +515,12 @@
     return arc()
   }
 
-  function drawLine(from, to) {
+  function drawLine (from, to) {
     return 'M' + from[0] + ',' + from[1] + 'L' + to[0] + ',' + to[1]
   }
 
   /** d3.partition 不能对奇数个节点均匀分布成环，自己实现之 */
-  function partition(data, innerR, outerR) {
+  function partition (data, innerR, outerR) {
     if (!data.length) {
       return
     }
