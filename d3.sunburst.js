@@ -349,8 +349,17 @@
         var alpha = d.x0
         if (d.data.majors.length > 8) {
           majorDis = 420
+          if (d.data.name === '商科') {
+            majorDis = 380
+          }
         } else if (d.data.majors.length >= 3) {
-          majorDis = 395 
+          majorDis = 395
+          if (d.data.name === '数学大类') {
+            majorDis = 330
+          }
+          if (d.data.name === '金融') {
+            majorDis = 350
+          }
         } else if (d.data.majors.length === 1 && d.data.majors[0].length < 5) { // special special case
           majorDis = 300
         } else {
@@ -363,6 +372,9 @@
       .each(function (d, i, g) {
         if (d.data.majors.length > 8) {
           majorRadius = 90
+          if (d.data.name === '商科') {
+            majorRadius = 70
+          }
         } else if (d.data.majors.length >= 5) {
           majorRadius = 85
         } else {
