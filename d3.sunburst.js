@@ -332,9 +332,9 @@
    * 在扇形区域假想一个虚拟的内切圆，将专业尽量的排列在内切圆内部
    */
   Sunburst.prototype.placeMajors = function () {
-    var MAJORDIS = 400 //  专业虚拟圆的圆心离同心圆圆心的距离
+    var MAJORDIS = 350 //  专业虚拟圆的圆心离同心圆圆心的距离
     var fontSize = 14
-    var MAJORRADIUS = 85  // 虚拟圆半径
+    var MAJORRADIUS = 75  // 虚拟圆半径
     var majorEnter = this.chartLayer.append('g')
       .classed('major-container', true)
       .selectAll('g')
@@ -349,6 +349,10 @@
         var alpha = d.x0
         if (d.data.majors.length > 8) {
           majorDis = 420
+        } else if (d.data.majors.length >= 3) {
+          majorDis = 395 
+        } else if (d.data.majors.length === 1 && d.data.majors[0].length < 5) { // special special case
+          majorDis = 300
         } else {
           majorDis = MAJORDIS
         }
@@ -359,6 +363,8 @@
       .each(function (d, i, g) {
         if (d.data.majors.length > 8) {
           majorRadius = 90
+        } else if (d.data.majors.length >= 5) {
+          majorRadius = 85
         } else {
           majorRadius = MAJORRADIUS
         }
@@ -392,7 +398,9 @@
             return positionList[i].x
           })
           .attr('x2', function (d, i) {
-            return positionList[i].x + d.length * fontSize
+            // 斜杠只算 1/4 宽度
+            var slashCnt = d.split('/').length - 1
+            return positionList[i].x + (d.length - slashCnt / 4 * 3) * fontSize
           })
           .attr('y1', function (d, i) {
             return positionList[i].y - fontSize / 2 + 2
@@ -446,6 +454,8 @@
       .append('ul')
       .classed('project-list', true)
       .style('left', e.pageX + 20 + 'px')
+      .style('max-height', '395px')
+      .style('overflow', 'auto')
     projectList.selectAll('li')
       .data(data)
       .enter()
@@ -548,7 +558,7 @@
         if (e.clientX > _this.width / 2) {
           return projectListLeft - width - 40 + 'px'
         } else {
-          return projectListLeft + projectListWidth + 20 + 'px'
+          return projectListLeft + projectListWidth + 30 + 'px'
         }
       })
     projectDetail.style('opacity', 0)
