@@ -88,8 +88,8 @@
       var innerR = 140
       var outerR = 500
       var e = d3.event
-      var shiftX = e.offsetX - _this.width / 2
-      var shiftY = -e.offsetY + _this.height / 2
+      var shiftX = e.pageX - _this.width / 2
+      var shiftY = -e.pageY + _this.height / 2
       var alpha = Math.atan(shiftX / shiftY)
       if (shiftX > 0 && shiftY < 0 || shiftX < 0 && shiftY < 0) {
         alpha = Math.PI + alpha
@@ -441,10 +441,11 @@
   Sunburst.prototype.renderProjectList = function (data, e) {
     var _this = this
     d3.selectAll('.project-list').remove()
+    d3.selectAll('.project-detail').remove()
     var projectList = d3.select('body')
       .append('ul')
       .classed('project-list', true)
-      .style('left', e.offsetX + 20 + 'px')
+      .style('left', e.pageX + 20 + 'px')
     projectList.selectAll('li')
       .data(data)
       .enter()
@@ -452,9 +453,9 @@
       .classed('project-item', true)
       .text(function (d) { return d })
     projectList.style('top', function () {
-      var shiftY = e.offsetY + 20
+      var shiftY = e.pageY + 20
       if (this.clientHeight + shiftY > _this.height) {
-        shiftY = e.offsetY - this.clientHeight - 20
+        shiftY = e.pageY - this.clientHeight - 20
       }
       return shiftY + 'px'
     })
@@ -574,7 +575,6 @@
       var projectListTop = parseFloat(projectList.style.top)
       var shiftY = projectListTop
       var r = shiftY + this.clientHeight - _this.height
-      console.log(shiftY, this.clientHeight, _this.height)
       if (r > 0) {
         shiftY -= r
       }
