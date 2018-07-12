@@ -360,7 +360,7 @@
           if (d.data.name === '金融') {
             majorDis = 350
           }
-        } else if (d.data.majors.length === 1 && d.data.majors[0].length < 5) { // special special case
+        } else if (d.data.majors.length === 1 && d.data.majors[0].name.length < 5) { // special special case
           majorDis = 300
         } else {
           majorDis = MAJORDIS
@@ -392,6 +392,7 @@
         var y = - majorRadius
 
         var positionList = majors.map(function (m, i) {
+          m = m.name
           var pos = { x: x, y: y }
           getNewPosition(pos, m)
           x = pos.x + m.length * fontSize + 20  // 专业之间有 20px 间距
@@ -410,6 +411,7 @@
             return positionList[i].x
           })
           .attr('x2', function (d, i) {
+            d = d.name
             // 斜杠只算 1/4 宽度
             var slashCnt = d.split('/').length - 1
             return positionList[i].x + (d.length - slashCnt / 4 * 3) * fontSize
@@ -428,10 +430,10 @@
           .enter()
           .append('text')
           .classed('major-item', true)
-          .text(function (d) { return d })
+          .text(function (d) { return d.name })
           .attr('font-size', fontSize)
           .style('cursor', 'pointer')
-          .attr('data-key', function (d) { return d })
+          .attr('data-key', function (d) { return d.name })
           .attr('x', function (d, i) {
             return positionList[i].x
           })
