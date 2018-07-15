@@ -5,6 +5,7 @@
   var BASIC_COLOR = 'rgb(204, 204, 204)'
   var HIGHLIGHT_COLOR = '#88b13e'
   var DURATION = 500
+  var MAX_MAJOR_LEN = 12
 
   var captureMouseMove = true
   var activeKey = ''
@@ -55,11 +56,11 @@
 
     d3.selectAll('.majors text').on('click', function (d, i) {
       var e = d3.event
-      activeMajor = d
-      _this.highlightMajor(d)
+      activeMajor = d.name
+      _this.highlightMajor(d.name)
       projects = []
 
-      d3.json('./projects.json?key=' + d, function (data) {
+      d3.json('./projects.json?key=' + d.name, function (data) {
         if (data.status) {
           throw Error(data.msg)
           return
@@ -147,10 +148,10 @@
       color: BASIC_COLOR
     }, {
       arcConfig: [630, 760, 0, 2 * Math.PI],
-      color: BASIC_COLOR
+      color: 'rgb(230, 230, 230)'
     }, {
       arcConfig: [890, 1100, 0, 2 * Math.PI],
-      color: BASIC_COLOR
+      color: 'rgb(236, 236, 236)'
     }]
     this.chartLayer.append('g')
       .classed('concentric-circle', true)
@@ -397,6 +398,9 @@
 
         var positionList = majors.map(function (m, i) {
           m = m.name
+          if (m.length > MAX_MAJOR_LEN) {
+            m = m.slice(0, MAX_MAJOR_LEN) + '...'
+          }
           var pos = { x: x, y: y }
           getNewPosition(pos, m)
           x = pos.x + m.length * fontSize + 20  // 专业之间有 20px 间距
@@ -410,7 +414,7 @@
           .enter()
           .append('line')
           .classed('major-item', true)
-          .attr('data-key', function (d) { return d })
+          .attr('data-key', function (d) { return d.name })
           .attr('x1', function (d, i) {
             return positionList[i].x
           })
@@ -434,7 +438,11 @@
           .enter()
           .append('text')
           .classed('major-item', true)
-          .text(function (d) { return d.name })
+          .text(function (d) { 
+            if (d.name.length > MAX_MAJOR_LEN) {
+              return d.name.slice(0, MAX_MAJOR_LEN) + '...'
+            }
+            return d.name })
           .attr('font-size', fontSize)
           .style('cursor', 'pointer')
           .attr('data-key', function (d) { return d.name })
@@ -445,6 +453,8 @@
             return positionList[i].y
           })
           .attr('fill', '#fff')
+          .append('title')
+          .text(function (d) { return d.name })
       })
 
     function getNewPosition (pos, name) {
