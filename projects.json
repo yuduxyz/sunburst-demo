@@ -1,21 +1,377 @@
 {
   "data": [
-    "Master of Accounting Science(MAS)",
-    "Master of Science in Accountancy(MSA)",
-    "Master of Accounting",
-    "MS in Accountancy",
-    "Master of Accounting",
-    "Master of Accounting",
-    "Master of Accounting",
-    "Master of Professional Accounting",
-    "Master of Accounting",
-    "Master of Accounting Science(MAS)",
-    "Master of Science in Accountancy(MSA)",
-    "Master of Accounting",
-    "MS in Accountancy",
-    "Master of Accounting",
-    "Master of Accounting",
-    "Master of Accounting"
+    {
+      "name": "斯坦福大学 M.S. in Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        },
+        {
+          "name": "查看该项目",
+          "value": "/node/795?college=1344&object=2450#2450"
+        }
+      ]
+    },
+    {
+      "name": "哥伦比亚大学 M.A. in Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "北卡罗莱纳州立大学 Master of Statistics - Biostatistics Concentration",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "威斯康星大学麦迪逊分校  M.S.in Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "北卡罗来纳大学教堂山分校  MS Program in Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "康奈尔大学 MPS program in Applied Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "德州农工大学  M.S. in Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "爱荷华州立大学 M.S. in Statistics ",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "宾夕法尼亚州立大学帕克分校  Master of Applied Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "威斯康星大学麦迪逊分校  M.S. in Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "明尼苏达大学双城校区  Master of Applied Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "普渡大学西拉法叶分校 M.S. in Applied Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "加州大学戴维斯分校  M.S. in Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        },
+        {
+          "name": "查看该项目",
+          "value": "/node/837?college=1379&object=2476#2476"
+        }
+      ]
+    },
+    {
+      "name": "加州大学伯克利分校 M.A. in Biostatistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "MBA in Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "加州大学伯克利分校 M.A. in Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "哈佛大学  M.S. in Biostatistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "约翰霍普金斯大学 M.S. in Biostatistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "华盛顿大学 M.S. in Biostatistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "选择自己的spexialized area：统计遗传学，建模和方法，数据科学。基于自己选择的方向做相应的Capstone Project，包括书面报告，口头报告和计算机代码。学生投入到医学，公共卫生，基因组学和其他领域的研究中，在导师的指导下完成研究型硕士论文。"
+        },
+        {
+          "name": "适宜学生",
+          "value": "较强的数学能力"
+        }
+      ]
+    },
+    {
+      "name": "哈佛大学  A.M. Program in Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "芝加哥大学 M.S. in Statistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "华盛顿大学 Master of Science (MS) Track \"Statistics - Advanced Methods and Data Analysis.\"",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "北卡罗来纳大学教堂山分校  M.P.H. in Biostatistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "卡内基梅隆大学 Master's of Statistical Practice (MSP)",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "密歇根大学安娜堡分校 M.S. in Biostatistics",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "杜克大学  The Master's in Statistical Science (MSS)",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "MS in Applied Statistic",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    },
+    {
+      "name": "加州大学洛杉矶分校 Master of Applied Science(MAS)",
+      "data": [
+        {
+          "name": "特点",
+          "value": "暂无"
+        },
+        {
+          "name": "适宜学生",
+          "value": "暂无"
+        }
+      ]
+    }
   ],
   "status": 0,
   "msg": "OK"

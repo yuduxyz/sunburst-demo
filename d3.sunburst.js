@@ -9,6 +9,8 @@
   var captureMouseMove = true
   var activeKey = ''
   var activeMajor = ''
+  var projects = []
+  var activeProject = ''
 
   var Sunburst = function (options) {
     this.width = options.width || WIDTH
@@ -55,12 +57,14 @@
       var e = d3.event
       activeMajor = d
       _this.highlightMajor(d)
+      projects = []
 
       d3.json('./projects.json?key=' + d, function (data) {
         if (data.status) {
           throw Error(data.msg)
           return
         }
+        projects = data.data
         _this.renderProjectList(data.data, e)
       })
 
@@ -475,7 +479,7 @@
       .enter()
       .append('li')
       .classed('project-item', true)
-      .text(function (d) { return d })
+      .text(function (d) { return d.name })
     projectList.style('top', function () {
       var shiftY = e.pageY + 20
       if (this.clientHeight + shiftY > _this.height) {
@@ -486,14 +490,18 @@
 
     // bind events
     d3.selectAll('.project-item').on('mouseover', function (d) {
+      if (activeProject === d.name) {
+        return
+      }
+      activeProject = d.name
       var e = d3.event
-      d3.json('./attribute.json?key=' + d, function (data) {
-        if (data.status) {
-          throw Error(data.msg)
-          return
+      var attr = []
+      projects.filter(function (p) {
+        if (p.name === d.name) {
+          attr = p.data
         }
-        _this.renderProjectDetail(data.data, e)
       })
+      _this.renderProjectDetail(attr, e)
     })
   }
 
@@ -565,16 +573,6 @@
     var projectDetail = d3.select('body').append('div')
       .classed('project-detail', true)
       .style('max-width', width + 'px')
-      .style('left', function () {
-        var projectList = d3.select('.project-list').node()
-        var projectListWidth = projectList.clientWidth
-        var projectListLeft = parseFloat(projectList.style.left)
-        if (e.clientX > _this.width / 2) {
-          return projectListLeft - width - 40 + 'px'
-        } else {
-          return projectListLeft + projectListWidth + 30 + 'px'
-        }
-      })
     projectDetail.style('opacity', 0)
       .transition()
       .duration(DURATION / 2)
@@ -593,8 +591,17 @@
           .text(item.value)
       }
     })
-
-    projectDetail.style('top', function () {
+    projectDetail.style('left', function () {
+      var projectList = d3.select('.project-list').node()
+      var projectListWidth = projectList.clientWidth
+      var projectListLeft = parseFloat(projectList.style.left)
+      var projectDetailWidth = projectDetail.node().clientWidth
+      if (e.clientX > _this.width / 2) {
+        return projectListLeft - projectDetailWidth - 40 + 'px'
+      } else {
+        return projectListLeft + projectListWidth + 30 + 'px'
+      }
+    }).style('top', function () {
       var projectList = d3.select('.project-list').node()
       var projectListTop = parseFloat(projectList.style.top)
       var shiftY = projectListTop
